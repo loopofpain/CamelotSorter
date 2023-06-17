@@ -75,5 +75,22 @@ namespace MusicTest.CamelotSorter.Extensions
             list[i] = list[j];
             list[j] = temp;
         }
+
+        public static Song? GetNextSong(this Song currentSong, ICollection<Song> remainingSongs, ICollection<int> camelotPosibilites)
+        {
+            foreach (var remainingPossibility in camelotPosibilites)
+            {
+                var targetAltKey = currentSong.GetTargetAltKey(remainingPossibility);
+
+                var neighbors = remainingSongs.Where(x => x is not null && x.AltKey == targetAltKey).ToArray();
+
+                if (neighbors.Any())
+                {
+                    return neighbors[0];
+                }
+            }
+
+            return null;
+        }
     }
 }

@@ -39,11 +39,11 @@ namespace MusicTest.CamelotSorter
 
                 var remainingSongs = sortableSongs.Skip(i + 1).ToArray();
 
-                var nextSong = GetNextSong(currentSong, remainingSongs, this.camelotPosibilities);
+                var nextSong = currentSong.GetNextSong(remainingSongs, this.camelotPosibilities);
 
                 if (nextSong is null)
                 {
-                    var thirdRuleNextSong = GetNextSong(currentSong, remainingSongs, new int[] { 1, -1 });
+                    var thirdRuleNextSong = currentSong.GetNextSong(remainingSongs, new int[] { 1, -1 });
                     if (thirdRuleNextSong is null)
                     {
                         continue;
@@ -71,21 +71,6 @@ namespace MusicTest.CamelotSorter
             return sortableSongs;
         }
 
-        private static Song? GetNextSong(Song currentSong, Song[] remainingSongs, int[] camelotPosibilites)
-        {
-            foreach (var remainingPossibility in camelotPosibilites)
-            {
-                var targetAltKey = currentSong.GetTargetAltKey(remainingPossibility);
 
-                var neighbors = remainingSongs.Where(x => x.AltKey == targetAltKey).ToArray();
-
-                if (neighbors.Any())
-                {
-                    return neighbors[0];
-                }
-            }
-
-            return null;
-        }
     }
 }

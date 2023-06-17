@@ -48,7 +48,8 @@
 
         public override string ToString()
         {
-            return $"({AltKey.ToInteger()} Key) (Title: {Title})";
+            var isfixed = this.IsFixed ? "[FIX]" : "";
+            return $"{isfixed} ({AltKey.ToInteger()} Key) (Title: {Title})";
         }
 
         public object Clone()
