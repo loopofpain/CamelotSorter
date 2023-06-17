@@ -32,12 +32,12 @@ namespace MusicTest.CamelotSorter
                 throw new ArgumentNullException(nameof(songs));
             }
 
-            var resultOptimized = this.OptimisticSort(songs);
+            var resultOptimized = this.Sort(songs);
 
             return resultOptimized;
         }
 
-        private Song[] OptimisticSort(Song[] sortableSongs)
+        private Song[] Sort(Song[] sortableSongs)
         {
             var availableSongs = sortableSongs.CloneList()
                                               .Where(x => !x.IsFixed)
@@ -78,7 +78,7 @@ namespace MusicTest.CamelotSorter
 
             var loop1Start = positionOfFirstFreeElement;
             var distance = positionOfLastFreeElement - loop1Start;
-            int halfDistance = ((int)(distance / 2));
+            var halfDistance = (int)(distance / 2);
             var loop1End = loop1Start + halfDistance;
 
             if (distance%2 > 0)
@@ -119,7 +119,21 @@ namespace MusicTest.CamelotSorter
                 }
             }
 
-            var firstFixed = onlyFixedSongs.ToArray().CloneList();
+            var optimizeSortedList = onlyFixedSongs.ToArray().CloneList();
+
+            var indexFirstNotFixedEntry = optimizeSortedList.ToList().FindIndex(x => x?.IsFixed == false);
+            var indexNextFixedEntry = optimizeSortedList.ToList().FindIndex(indexFirstNotFixedEntry, x => x?.IsFixed == true);
+            
+            // List starting with a fixed entry and ending with a fixed array
+            var trimmedListToSort = optimizeSortedList[(indexFirstNotFixedEntry-1)..(indexNextFixedEntry+1)];
+            var sortedTrimmedList = this.camelotSorter.SortSongs(trimmedListToSort);
+
+            // Copy results from trimmed List to source list
+            for (var i = indexFirstNotFixedEntry-1; i <= indexNextFixedEntry; i++)
+            {
+                var indexForTrimmedList = i - (indexFirstNotFixedEntry - 1);
+                optimizeSortedList[i] = sortedTrimmedList[indexForTrimmedList];
+            }
 
             return onlyFixedSongs;
         }

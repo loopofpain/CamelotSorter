@@ -26,6 +26,11 @@ namespace MusicTest.CamelotSorter.Extensions
 
             foreach (var song in songs)
             {
+                if (song is null)
+                {
+                    list.Add(null);
+                    continue;
+                }
                 var clonedSong = (Song)song.Clone();
                 list.Add(clonedSong);
             }

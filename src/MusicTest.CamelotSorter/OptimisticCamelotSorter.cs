@@ -32,18 +32,40 @@ namespace MusicTest.CamelotSorter
                 throw new ArgumentNullException(nameof(songs));
             }
 
-            var sortedBySimpleSorter = this.simpleCamelotSorter.SortSongs(songs);
-            var resultOptimized = this.OptimisticSort(sortedBySimpleSorter);
+            // Delete first and last song if it contains fixed songs
+            var firstSong = songs.FirstOrDefault();
+            var lastSong = songs.LastOrDefault();
+            var isListWithFixedSongs = false;
+
+            var songsToSort = songs.ToList();
+            if (firstSong?.IsFixed == true && lastSong?.IsFixed == true)
+            {
+                isListWithFixedSongs = true;
+                songsToSort.Remove(firstSong);
+                songsToSort.Remove(lastSong);
+            }
+
+            var sortedBySimpleSorter = this.simpleCamelotSorter.SortSongs(songsToSort.ToArray());
+
+            // Add fixed songs to list again
+            if (isListWithFixedSongs)
+            {
+                songsToSort = sortedBySimpleSorter.ToList();
+                songsToSort.Insert(0, firstSong!);
+                songsToSort.Add(lastSong!);
+            }
+
+            var resultOptimized = this.OptimisticSort(songsToSort.ToArray(), isListWithFixedSongs);
 
             return resultOptimized;
         }
 
-        private Song[] OptimisticSort(Song[] sortableSongs)
+        private Song[] OptimisticSort(Song[] sortableSongs, bool isListWithFixedSongs)
         {
             var clonedSongs = sortableSongs.CloneList()
                                            .ToArray();
 
-            for (var i = 1; i < clonedSongs.Length; i++)
+            for (var i = isListWithFixedSongs ? 0 : 1; i < clonedSongs.Length; i++)
             {
                 if (i + 1 == clonedSongs.Length || i - 1 <= 0)
                 {
@@ -74,7 +96,10 @@ namespace MusicTest.CamelotSorter
 
             };
 
-            clonedSongs = FixLastEntryIfNeeded(clonedSongs);
+            if (!isListWithFixedSongs)
+            {
+                clonedSongs = FixLastEntryIfNeeded(clonedSongs);
+            }
 
             return clonedSongs;
         }
