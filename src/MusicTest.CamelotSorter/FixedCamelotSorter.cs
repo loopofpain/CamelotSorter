@@ -51,43 +51,48 @@ namespace MusicTest.CamelotSorter
                 {
                     onlyFixedSongs[i] = null;
                 }
-            }         
-
-            var positionOfFirstFreeElement = -1;
-            var positionOfLastFreeElement = -1;
-
-            for (var i = 0; i < onlyFixedSongs.Length; i++)
-            {
-                if (positionOfFirstFreeElement >=0 && positionOfLastFreeElement >= 0)
-                {
-                    break;
-                }
-
-                if (onlyFixedSongs[i]==null && positionOfFirstFreeElement==-1)
-                {
-                    positionOfFirstFreeElement = i;
-                    continue;
-                }
-
-                if (onlyFixedSongs[i] != null && positionOfFirstFreeElement != -1)
-                {
-                    positionOfLastFreeElement = i-1;
-                    continue;
-                }
             }
 
-            var loop1Start = positionOfFirstFreeElement;
-            var distance = positionOfLastFreeElement - loop1Start;
-            var halfDistance = (int)(distance / 2);
-            var loop1End = loop1Start + halfDistance;
+            //var positionOfFirstFreeElement = -1;
+            //var positionOfLastFreeElement = -1;
 
-            if (distance%2 > 0)
+
+
+            //for (var i = 0; i < onlyFixedSongs.Length; i++)
+            //{
+            //    if (positionOfFirstFreeElement >=0 && positionOfLastFreeElement >= 0)
+            //    {
+            //        break;
+            //    }
+
+            //    if (onlyFixedSongs[i]==null && positionOfFirstFreeElement==-1)
+            //    {
+            //        positionOfFirstFreeElement = i;
+            //        continue;
+            //    }
+
+            //    if (onlyFixedSongs[i] != null && positionOfFirstFreeElement != -1)
+            //    {
+            //        positionOfLastFreeElement = i-1;
+            //        continue;
+            //    }
+            //}
+
+            var firstFreeElementInArray = onlyFixedSongs.ToList().FindIndex(x => x is null);
+            var fixedElementAfterFirstFreeElement = onlyFixedSongs.ToList().FindIndex(firstFreeElementInArray, x => x is not null && x.IsFixed);
+            fixedElementAfterFirstFreeElement--;
+
+            var distanceBetweenStartAndEnd = fixedElementAfterFirstFreeElement - firstFreeElementInArray;
+            var halfDistance = (int)(distanceBetweenStartAndEnd / 2);
+            var lastElementToFill = firstFreeElementInArray + halfDistance;
+
+            if (distanceBetweenStartAndEnd%2 > 0)
             {
-                loop1End++;
+                lastElementToFill++;
             }
 
 
-            for (var i = loop1Start; i <= loop1End; i++)
+            for (var i = firstFreeElementInArray; i <= lastElementToFill; i++)
             {
                 if (i > 0)
                 {
@@ -103,7 +108,7 @@ namespace MusicTest.CamelotSorter
                 }
             }
 
-            for (var i = positionOfLastFreeElement + 1 ; i > loop1End; i--)
+            for (var i = fixedElementAfterFirstFreeElement + 1 ; i > lastElementToFill; i--)
             {
                 if (i < onlyFixedSongs.Length-1)
                 {

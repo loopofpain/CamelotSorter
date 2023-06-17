@@ -65,9 +65,9 @@ namespace MusicTest.CamelotSorter
             var clonedSongs = sortableSongs.CloneList()
                                            .ToArray();
 
-            for (var i = isListWithFixedSongs ? 0 : 1; i < clonedSongs.Length; i++)
+            for (var i = 1; i < clonedSongs.Length; i++)
             {
-                if (i + 1 == clonedSongs.Length || i - 1 <= 0)
+                if (i + 1 == clonedSongs.Length || (i - 1 <= 0 && !isListWithFixedSongs))
                 {
                     continue;
                 }
