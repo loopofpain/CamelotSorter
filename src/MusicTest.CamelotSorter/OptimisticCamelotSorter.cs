@@ -36,6 +36,7 @@ namespace MusicTest.CamelotSorter
             var firstSong = songs.FirstOrDefault();
             var lastSong = songs.LastOrDefault();
             var isListWithFixedSongs = false;
+            var isListWithStartingFixedSongs = false;
 
             var songsToSort = songs.ToList();
             if (firstSong?.IsFixed == true && lastSong?.IsFixed == true)
@@ -43,6 +44,10 @@ namespace MusicTest.CamelotSorter
                 isListWithFixedSongs = true;
                 songsToSort.Remove(firstSong);
                 songsToSort.Remove(lastSong);
+            }else if(firstSong?.IsFixed == true)
+            {
+                isListWithStartingFixedSongs = true;
+                songsToSort.Remove(firstSong);
             }
 
             var sortedBySimpleSorter = this.simpleCamelotSorter.SortSongs(songsToSort.ToArray());
@@ -53,9 +58,13 @@ namespace MusicTest.CamelotSorter
                 songsToSort = sortedBySimpleSorter.ToList();
                 songsToSort.Insert(0, firstSong!);
                 songsToSort.Add(lastSong!);
+            }else if(isListWithStartingFixedSongs)
+            {
+                songsToSort = sortedBySimpleSorter.ToList();
+                songsToSort.Insert(0, firstSong!);
             }
 
-            var resultOptimized = this.OptimisticSort(songsToSort.ToArray(), isListWithFixedSongs);
+            var resultOptimized = this.OptimisticSort(songsToSort.ToArray(), isListWithFixedSongs || isListWithStartingFixedSongs);
 
             return resultOptimized;
         }
