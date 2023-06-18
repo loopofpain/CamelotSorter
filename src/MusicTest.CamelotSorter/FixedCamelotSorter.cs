@@ -25,6 +25,11 @@ namespace MusicTest.CamelotSorter
             this.camelotSorter = new OptimisticCamelotSorter(this.camelotPosibilities);
         }
 
+        private int[] GetAllCamelotPosibilities()
+        {
+            return this.camelotPosibilities.Concat(new int[] { 1, -1 }).ToArray();
+        }
+
         public Song[] SortSongs(Song[] songs)
         {
             if (songs is null)
@@ -42,14 +47,14 @@ namespace MusicTest.CamelotSorter
             var availableSongs = sortableSongs.CloneList()
                                               .Where(x => !x.IsFixed)
                                               .ToList();
-            var onlyFixedSongs = sortableSongs.CloneList()
+            var songsToFix = sortableSongs.CloneList()
                                               .ToArray();
 
-            for (var i = 0; i < onlyFixedSongs.Length; i++)
+            for (var i = 0; i < songsToFix.Length; i++)
             {
-                if (!onlyFixedSongs[i].IsFixed)
+                if (!songsToFix[i].IsFixed)
                 {
-                    onlyFixedSongs[i] = null;
+                    songsToFix[i] = null;
                 }
             }
 
@@ -58,12 +63,12 @@ namespace MusicTest.CamelotSorter
 
             while (true)
             {
-                var firstFreeElementInArray = onlyFixedSongs.ToList().FindIndex(positionFirstFreeElement, x => x is null);
-                if (firstFreeElementInArray==-1)
+                var firstFreeElementInArray = songsToFix.ToList().FindIndex(positionFirstFreeElement, x => x is null);
+                if (firstFreeElementInArray == -1)
                 {
                     break;
                 }
-                var fixedElementAfterFirstFreeElement = onlyFixedSongs.ToList().FindIndex(firstFreeElementInArray, x => x is not null && x.IsFixed);
+                var fixedElementAfterFirstFreeElement = songsToFix.ToList().FindIndex(firstFreeElementInArray, x => x is not null && x.IsFixed);
 
                 positionFirstFreeElement = firstFreeElementInArray;
 
@@ -73,7 +78,7 @@ namespace MusicTest.CamelotSorter
                 }
                 else if (firstFreeElementInArray > 0 && fixedElementAfterFirstFreeElement < 0)
                 {
-                    fixedElementAfterFirstFreeElement = onlyFixedSongs.Length - 1;
+                    fixedElementAfterFirstFreeElement = songsToFix.Length - 1;
                     isFixed = false;
                 }
                 else
@@ -92,55 +97,52 @@ namespace MusicTest.CamelotSorter
                         lastElementToFill++;
                     }
 
-
                     for (var i = firstFreeElementInArray; i <= lastElementToFill; i++)
                     {
-                        if (i > 0)
+                        if (i <= 0)
                         {
-                            var allPoss = this.camelotPosibilities.Concat(new int[] { 1, -1 }).ToArray();
-                            var nextSong = onlyFixedSongs[i - 1].GetNextSong(availableSongs, allPoss);
+                            continue;
+                        }
+                        var nextSong = songsToFix[i - 1].GetNextSong(availableSongs, this.GetAllCamelotPosibilities());
+
+                        if (nextSong is null)
+                        {
+                            nextSong = songsToFix[i - 1].IncrementUntilLimitReached(availableSongs);
 
                             if (nextSong is null)
                             {
-                                nextSong = onlyFixedSongs[i - 1].IncrementUntilLimitReached(availableSongs);
-
-                                if (nextSong is null)
-                                {
-                                    throw new Exception("");
-                                }
+                                throw new Exception("");
                             }
-
-                            availableSongs.Remove(nextSong);
-                            onlyFixedSongs[i] = nextSong;
                         }
+
+                        availableSongs.Remove(nextSong);
+                        songsToFix[i] = nextSong;
                     }
 
-                    for (var i = fixedElementAfterFirstFreeElement-1; i > lastElementToFill; i--)
-                        {
-                        if (i >= onlyFixedSongs.Length - 1)
+                    for (var i = fixedElementAfterFirstFreeElement - 1; i > lastElementToFill; i--)
+                    {
+                        if (i >= songsToFix.Length - 1)
                         {
                             continue;
                         }
 
+                        var songForNext = songsToFix[i + 1];
 
-                        var songForNext = onlyFixedSongs[i + 1];
-
-                        if (onlyFixedSongs[i + 1] != null)
+                        if (songsToFix[i + 1] != null)
                         {
-                            songForNext = onlyFixedSongs[i + 1];
-                        }else
+                            songForNext = songsToFix[i + 1];
+                        }
+                        else
                         {
                             throw new Exception("");
                         }
-
 
                         var nextSong = songForNext.GetNextSong(availableSongs, this.camelotPosibilities);
 
                         if (nextSong is null)
                         {
-                            var poss = this.camelotPosibilities.Concat(new int[] { 1, -1 }).ToArray();
-                            nextSong = songForNext.GetNextSong(availableSongs, poss);
-                            
+                            nextSong = songForNext.GetNextSong(availableSongs, GetAllCamelotPosibilities());
+
                             if (nextSong is null)
                             {
                                 nextSong = songForNext.IncrementUntilLimitReached(availableSongs);
@@ -153,7 +155,7 @@ namespace MusicTest.CamelotSorter
                         }
 
                         availableSongs.Remove(nextSong);
-                        onlyFixedSongs[i] = nextSong;
+                        songsToFix[i] = nextSong;
 
                     }
                 }
@@ -161,12 +163,11 @@ namespace MusicTest.CamelotSorter
                 {
                     for (var i = firstFreeElementInArray; i <= fixedElementAfterFirstFreeElement; i++)
                     {
-                        var poss = this.camelotPosibilities.Concat(new int[] { 1, -1 }).ToArray();
-                        var nextSong = onlyFixedSongs[i - 1].GetNextSong(availableSongs, poss);
+                        var nextSong = songsToFix[i - 1].GetNextSong(availableSongs, GetAllCamelotPosibilities());
 
                         if (nextSong is null)
                         {
-                            nextSong = onlyFixedSongs[i - 1].IncrementUntilLimitReached(availableSongs);
+                            nextSong = songsToFix[i - 1].IncrementUntilLimitReached(availableSongs);
 
                             if (nextSong is null)
                             {
@@ -175,11 +176,11 @@ namespace MusicTest.CamelotSorter
                         }
 
                         availableSongs.Remove(nextSong);
-                        onlyFixedSongs[i] = nextSong;
+                        songsToFix[i] = nextSong;
                     }
                 }
 
-                var optimizeSortedList = onlyFixedSongs.ToArray().CloneList();
+                var optimizeSortedList = songsToFix.ToArray().CloneList();
 
                 var indexFirstNotFixedEntry = optimizeSortedList.ToList().FindIndex(positionFirstFreeElement, x => x?.IsFixed == false);
                 var indexNextFixedEntry = optimizeSortedList.ToList().FindIndex(indexFirstNotFixedEntry, x => x?.IsFixed == true);
@@ -187,17 +188,17 @@ namespace MusicTest.CamelotSorter
                 positionFirstFreeElement = indexNextFixedEntry;
 
                 // List starting with a fixed entry and ending with a fixed array
-                var trimmedListToSort = optimizeSortedList[(indexFirstNotFixedEntry - 1)..(indexNextFixedEntry+1)];
+                var trimmedListToSort = optimizeSortedList[(indexFirstNotFixedEntry - 1)..(indexNextFixedEntry + 1)];
                 var sortedTrimmedList = this.camelotSorter.SortSongs(trimmedListToSort);
 
                 // Copy results from trimmed List to source list
-                for (var i = indexFirstNotFixedEntry - 1; i < indexNextFixedEntry ; i++)
+                for (var i = indexFirstNotFixedEntry - 1; i < indexNextFixedEntry; i++)
                 {
                     var indexForTrimmedList = i - (indexFirstNotFixedEntry - 1);
                     optimizeSortedList[i] = sortedTrimmedList[indexForTrimmedList];
                 }
             }
-            return onlyFixedSongs;
+            return songsToFix;
         }
 
     }
