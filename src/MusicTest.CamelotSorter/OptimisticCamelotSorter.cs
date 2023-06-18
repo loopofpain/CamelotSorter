@@ -76,8 +76,13 @@ namespace MusicTest.CamelotSorter
 
                 if (!doNeighborsFulfilPosibilities)
                 {
-                    var songWithIssue = GetSongWithoutAnyMathingNeighbor(i, clonedSongs, this.camelotPosibilities);
+                    var songWithIssue = GetSongWithoutAnyMatchingNeighbor(i, clonedSongs, this.camelotPosibilities);
                     songWithIssue ??= clonedSongs[i + 1];
+
+                    if (songWithIssue?.IsFixed == true)
+                    {
+                        continue;
+                    }
 
                     var indexOfAncestorWithSameMusicAltKey = clonedSongs.Take(i - 1)
                                                                    .ToList()
@@ -159,7 +164,7 @@ namespace MusicTest.CamelotSorter
             return result;
         }
 
-        private static Song? GetSongWithoutAnyMathingNeighbor(int currentPositionInArray, Song[] songs, int[] camelotPosibilities)
+        private static Song? GetSongWithoutAnyMatchingNeighbor(int currentPositionInArray, Song[] songs, int[] camelotPosibilities)
         {
             var predecessor = songs[currentPositionInArray - 1];
             var currentSong = songs[currentPositionInArray];

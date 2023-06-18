@@ -11,9 +11,9 @@ var camelotPossibilities = new int[]
     //3,
     //-3,
     7,
-    -7
+    -7,
 };
-var allSongs = TestDataGenerator.GetSongs(64);
+var allSongs = TestDataGenerator.GetSongs(9964);
 
 //ICamelotSorter optimisticSorter = new OptimisticCamelotSorter(camelotPossibilities);
 //var optimisticSortedSongs = optimisticSorter.SortSongs(allSongs);
@@ -23,7 +23,9 @@ var allSongs = TestDataGenerator.GetSongs(64);
 var songsForFixedSorter = allSongs.CloneList().ToList();
 
 var songsToFix = songsForFixedSorter.Where(x => x.AltKey == new MusicAltKey(3))
+                                    .Take(3)
                                     .ToList();
+
 
 foreach (var fixableSong in songsToFix)
 {
@@ -34,9 +36,11 @@ foreach (var fixableSong in songsToFix)
 
 songsForFixedSorter[31].IsFixed = true;
 songsForFixedSorter[32].IsFixed = true;
+//songsForFixedSorter[33].IsFixed = true;
 
 songsForFixedSorter[55].IsFixed = true;
 songsForFixedSorter[56].IsFixed = true;
+//songsForFixedSorter[57].IsFixed = true;
 
 ICamelotSorter fixedSorter = new FixedCamelotSorter(camelotPossibilities);
 var fixSort = fixedSorter.SortSongs(songsForFixedSorter.ToArray());

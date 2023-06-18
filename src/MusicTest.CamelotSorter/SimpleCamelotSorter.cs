@@ -39,11 +39,13 @@ namespace MusicTest.CamelotSorter
 
                 var remainingSongs = sortableSongs.Skip(i + 1).ToArray();
 
-                var nextSong = currentSong.GetNextSong(remainingSongs, this.camelotPosibilities);
+                var allPossibilities = this.camelotPosibilities.Concat(new int[] { 1, -1 }).ToArray();
+
+                var nextSong = currentSong.GetNextSong(remainingSongs, allPossibilities);
 
                 if (nextSong is null)
                 {
-                    var thirdRuleNextSong = currentSong.GetNextSong(remainingSongs, new int[] { 1, -1 });
+                    var thirdRuleNextSong = currentSong.IncrementUntilLimitReached(remainingSongs);
                     if (thirdRuleNextSong is null)
                     {
                         continue;

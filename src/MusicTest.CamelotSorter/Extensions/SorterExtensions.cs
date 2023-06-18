@@ -4,8 +4,13 @@ namespace MusicTest.CamelotSorter.Extensions
 {
     public static class SorterExtensions
     {
-        public static MusicAltKey GetTargetAltKey(this Song sortableSongs, int targetPosibility)
+        public static MusicAltKey? GetTargetAltKey(this Song sortableSongs, int targetPosibility)
         {
+            if (sortableSongs is null)
+            {
+                return null;
+            }
+
             MusicAltKey targetAltKey;
 
             if (targetPosibility < 0)
@@ -81,8 +86,42 @@ namespace MusicTest.CamelotSorter.Extensions
             list[j] = temp;
         }
 
+        public static Song? IncrementUntilLimitReached(this Song currentSong, ICollection<Song> remainingSongs)
+        {
+            var altKeyGroupWithoutSourceAltKey = remainingSongs.GroupBy(y => y.AltKey.ToInteger())
+                                                               .OrderBy(x => x.Key)
+                                                               .ToDictionary(x => x.Key,y => y.ToList());
+
+            var targetAltKey = currentSong.AltKey.ToInteger();
+            var altKeys = altKeyGroupWithoutSourceAltKey.Keys.ToList();
+
+            var nearestNumber = altKeys[0];
+            var smallestDifference = Math.Abs(targetAltKey - nearestNumber);
+
+            foreach (var number in altKeys)
+            {
+                var difference = Math.Abs(targetAltKey - number);
+
+                if (difference <= smallestDifference)
+                {
+                    smallestDifference = difference;
+                    nearestNumber = number;
+                }
+            }
+
+            var element = altKeyGroupWithoutSourceAltKey[nearestNumber].FirstOrDefault();
+
+
+            return element;
+        }
+
         public static Song? GetNextSong(this Song currentSong, ICollection<Song> remainingSongs, ICollection<int> camelotPosibilites)
         {
+            if (currentSong is null)
+            {
+                return null;
+            }
+
             foreach (var remainingPossibility in camelotPosibilites)
             {
                 var targetAltKey = currentSong.GetTargetAltKey(remainingPossibility);
