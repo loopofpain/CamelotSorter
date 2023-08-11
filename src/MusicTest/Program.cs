@@ -15,11 +15,13 @@ var camelotPossibilities = new int[]
 };
 var allSongs = TestDataGenerator.GetSongs(100);
 
-//ICamelotSorter optimisticSorter = new OptimisticCamelotSorter(camelotPossibilities);
-//var optimisticSortedSongs = optimisticSorter.SortSongs(allSongs);
+//var tst = new ToneDetiminer().DetermineKey(@"C:\Users\Lukas\Music\Edited Music\Darude - Sandstorm.wav");
 
-//var fixedSongs = optimisticSortedSongs.CloneList()
-//                                      .ToList();
+ICamelotSorter optimisticSorter = new OptimisticCamelotSorter(camelotPossibilities);
+var optimisticSortedSongs = optimisticSorter.SortSongs(allSongs);
+
+var fixedSongs = optimisticSortedSongs.CloneList()
+                                      .ToList();
 var songsForFixedSorter = allSongs.CloneList().ToList();
 
 var songsToFix = songsForFixedSorter.Where(x => x.AltKey == new MusicAltKey(3))
