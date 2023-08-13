@@ -8,7 +8,7 @@
       draggable="true" >{{column.columnName}}</th>
     </tr>
 
-    <tr *ngFor="let column of tableRowsToDisplay">
-      <td *ngFor="let columnsInRow of column.columns">{{columnsInRow.value}}</td>
+    <tr [id]="row.cssId" *ngFor="let row of tableRowsToDisplay">
+      <td [id]="columnsInRow.cssId" *ngFor="let columnsInRow of row.columns">{{columnsInRow.value}}</td>
     </tr>
   </table>

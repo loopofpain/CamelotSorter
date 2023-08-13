@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { SuperTableRow } from './super-table/super-table-row';
+import { SuperTableRowColumn } from './super-table/super-table-row-column';
 
 @Component({
   selector: 'app-root',
@@ -9,57 +10,47 @@ import { SuperTableRow } from './super-table/super-table-row';
 export class AppComponent {
   title = 'music-test';
 
-  public rows: SuperTableRow[] = [
-    {
-      index: 1,
-      columns: [
-        {
-          columnName:"Title",
-          value:"Darude - Sandstorm"
-        },
-        {
-          columnName:"Alt Key",
-          value:"A1"
-        },
-        {
-          columnName:"Is Fixed",
-          value:"True"
-        }
-      ]
-    },
-    {
-      index: 2,
-      columns: [
-        {
-          columnName:"Title",
-          value:"Sido - Arschficksong"
-        },
-        {
-          columnName:"Alt Key",
-          value:"A2"
-        },
-        {
-          columnName:"Is Fixed",
-          value:"False"
-        }
-      ]
-    },
-    {
-      index: 3,
-      columns: [
-        {
-          columnName:"Title",
-          value:"SSIO - NULLKOMMAEINS"
-        },
-        {
-          columnName:"Alt Key",
-          value:"B8"
-        },
-        {
-          columnName:"Is Fixed",
-          value:"False"
-        }
-      ]
-    }
-  ];
+  myRows: SuperTableRow[] = []
+
+  private get rows(): SuperTableRow[] {
+
+    const rows: SuperTableRow[] = []
+
+    const row1 = new SuperTableRow();
+    row1.index=1;
+    row1.columns=[
+      new SuperTableRowColumn(row1,'Title','Darude - Sandstorm'),
+      new SuperTableRowColumn(row1,'Alt Key','A1'),
+      new SuperTableRowColumn(row1,'Is Fixed','True')
+
+    ];
+
+    const row2 = new SuperTableRow();
+    row2.index=2;
+    row2.columns=[
+      new SuperTableRowColumn(row2, 'Title','Sido - Arschficksong'),
+      new SuperTableRowColumn(row2, 'Alt Key','A2'),
+      new SuperTableRowColumn(row2, 'Is Fixed','True')
+
+    ];
+
+    const row3 = new SuperTableRow();
+    row3.index=3;
+    row3.columns=[
+      new SuperTableRowColumn(row3, 'Title','SSIO - NULLKOMMAEINS'),
+      new SuperTableRowColumn(row3, 'Alt Key','B9'),
+      new SuperTableRowColumn(row3, 'Is Fixed','False')
+
+    ];
+
+    rows.push(row1)
+    rows.push(row2)
+    rows.push(row3)
+
+    return rows;
+  }
+
+  constructor() {
+    this.myRows = this.rows
+  }
 }

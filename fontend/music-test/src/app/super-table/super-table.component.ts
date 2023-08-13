@@ -14,12 +14,13 @@ export class SuperTableComponent implements OnInit, OnChanges{
 
   public tableColumns: SuperTableColumn[] = [];
 
-  public dragging?: SuperTableColumn;
-
-  public draggable: SuperTableColumn[] = [];
-  public dropped: SuperTableColumn[] = [];
+  public draggingTableColumn?: SuperTableColumn;
 
   public tableRowsToDisplay :SuperTableRow[] = []
+
+  constructor() {
+
+  }
 
   public getColumns(): SuperTableColumn[]
   {
@@ -55,14 +56,12 @@ export class SuperTableComponent implements OnInit, OnChanges{
     for (let row of this.rows) {
       const resultRow = new SuperTableRow();
       row.index = ++index;
-      debugger;
+      resultRow.index = row.index
+
       for(let column of this.tableColumns) {
         row.columns.forEach(sourceColumn => {
           if(sourceColumn.columnName === column.columnName){
-            const newRowColumn: SuperTableRowColumn = {
-              columnName: sourceColumn.columnName,
-              value: sourceColumn.value
-            }
+            const newRowColumn: SuperTableRowColumn= new SuperTableRowColumn(resultRow,sourceColumn.columnName,sourceColumn.value);
 
             resultRow.columns.push(newRowColumn);
           }
@@ -88,7 +87,7 @@ export class SuperTableComponent implements OnInit, OnChanges{
   public drop(ev:DragEvent) {
     ev.preventDefault();
 
-    const indexDraggedElement = this.tableColumns.indexOf(this.dragging!);
+    const indexDraggedElement = this.tableColumns.indexOf(this.draggingTableColumn!);
     let indexOfTargetElement = -1;
 
     for (let index = 0; index < this.tableColumns.length; index++) {
@@ -108,7 +107,7 @@ export class SuperTableComponent implements OnInit, OnChanges{
 
     this.swapElements(this.tableColumns,indexDraggedElement,indexOfTargetElement);
 
-    this.dragging = undefined;
+    this.draggingTableColumn = undefined;
 
     this.tableRowsToDisplay = this.getRows();
     this.rows = this.tableRowsToDisplay;
@@ -116,7 +115,7 @@ export class SuperTableComponent implements OnInit, OnChanges{
 
 
   public dragOver(event: DragEvent){
-    if(this.dragging){
+    if(this.draggingTableColumn){
       event.preventDefault();
     }
   };
@@ -124,15 +123,15 @@ export class SuperTableComponent implements OnInit, OnChanges{
   public dragStart(event: DragEvent, item: SuperTableColumn){
     event!.dataTransfer!.setData('text', item.columnName);
     event!.dataTransfer!.effectAllowed = 'move';
-    this.dragging = item;
+    this.draggingTableColumn = item;
   };
 
   public dragEnd(event: DragEvent, item: SuperTableColumn){
-    this.dragging = undefined;
+    this.draggingTableColumn = undefined;
   };
 
 
-  private swapElements<T>(arr: T[], index1: number, index2: number): void {
-    [arr[index1], arr[index2]] = [arr[index2], arr[index1]];
+  private swapElements<T>(array: T[], index1: number, index2: number): void {
+    [array[index1], array[index2]] = [array[index2], array[index1]];
   }
 }
