@@ -84,10 +84,16 @@ export class SuperTableComponent implements OnInit, OnChanges{
     this.tableRowsToDisplay = this.getRows();
   }
 
-  public drop(ev:DragEvent) {
+  public tableColumnOnDrop(ev:DragEvent) {
     ev.preventDefault();
 
     const indexDraggedElement = this.tableColumns.indexOf(this.draggingTableColumn!);
+
+    if(indexDraggedElement === -1){
+      this.draggingTableColumn = undefined;
+      return;
+    }
+
     let indexOfTargetElement = -1;
 
     for (let index = 0; index < this.tableColumns.length; index++) {
@@ -113,20 +119,19 @@ export class SuperTableComponent implements OnInit, OnChanges{
     this.rows = this.tableRowsToDisplay;
   }
 
-
-  public dragOver(event: DragEvent){
+  public tableColumnOnDragOver(event: DragEvent){
     if(this.draggingTableColumn){
       event.preventDefault();
     }
   };
 
-  public dragStart(event: DragEvent, item: SuperTableColumn){
+  public tableColumnOnDragStart(event: DragEvent, item: SuperTableColumn){
     event!.dataTransfer!.setData('text', item.columnName);
     event!.dataTransfer!.effectAllowed = 'move';
     this.draggingTableColumn = item;
   };
 
-  public dragEnd(event: DragEvent, item: SuperTableColumn){
+  public tableColumnOnDragEnd(event: DragEvent, item: SuperTableColumn){
     this.draggingTableColumn = undefined;
   };
 

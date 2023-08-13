@@ -1,14 +1,14 @@
 <table>
     <tr>
       <th [id]="column.cssId" *ngFor="let column of tableColumns"
-      (dragstart)="dragStart($event, column)"
-      (dragend)="dragEnd($event, column)"
-      (dragover)="dragOver($event)"
-      (drop)="drop($event)"
+      (dragstart)="tableColumnOnDragStart($event, column)"
+      (dragend)="tableColumnOnDragEnd($event, column)"
+      (dragover)="tableColumnOnDragOver($event)"
+      (drop)="tableColumnOnDrop($event)"
       draggable="true" >{{column.columnName}}</th>
     </tr>
 
-    <tr [id]="row.cssId" *ngFor="let row of tableRowsToDisplay">
+    <tr [id]="row.cssId" draggable="true" *ngFor="let row of tableRowsToDisplay">
       <td [id]="columnsInRow.cssId" *ngFor="let columnsInRow of row.columns">{{columnsInRow.value}}</td>
     </tr>
   </table>
