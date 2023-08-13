@@ -1,14 +1,17 @@
-<table>
-    <tr>
-      <th [id]="column.cssId" *ngFor="let column of tableColumns"
-      (dragstart)="tableColumnOnDragStart($event, column)"
-      (dragend)="tableColumnOnDragEnd($event, column)"
-      (dragover)="tableColumnOnDragOver($event)"
-      (drop)="tableColumnOnDrop($event)"
-      draggable="true" >{{column.columnName}}</th>
-    </tr>
+<!-- https://dev.to/dcodeyt/creating-beautiful-html-tables-with-css-428l -->
 
-    <tr [id]="row.cssId" draggable="true" *ngFor="let row of tableRowsToDisplay">
-      <td [id]="columnsInRow.cssId" *ngFor="let columnsInRow of row.columns">{{columnsInRow.value}}</td>
+<table class="styled-table">
+  <thead>
+    <tr>
+      <th [id]="column.cssId" *ngFor="let column of tableColumns" (dragstart)="tableColumnOnDragStart($event, column)"
+        (dragend)="tableColumnOnDragEnd($event, column)" (dragover)="tableColumnOnDragOver($event)"
+        (drop)="tableColumnOnDrop($event)" draggable="true">{{column.columnName}}</th>
     </tr>
-  </table>
+  </thead>
+
+  <tbody cdkDropList (cdkDropListDropped)="dropSuperTableRowColumn($event)">
+    <tr cdkDrag cdkDragLockAxis="y" [id]="row.cssId" *ngFor="let row of tableRowsToDisplay">
+      <td cdkDragHandle [id]="columnsInRow.cssId" *ngFor="let columnsInRow of row.columns">{{columnsInRow.value}}</td>
+    </tr>
+  </tbody>
+</table>

@@ -2,6 +2,7 @@ import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/cor
 import { SuperTableRow } from './super-table-row';
 import { SuperTableColumn } from './super-table-column';
 import { SuperTableRowColumn } from './super-table-row-column';
+import { CdkDragDrop, moveItemInArray } from "@angular/cdk/drag-drop";
 
 @Component({
   selector: 'app-super-table',
@@ -15,6 +16,8 @@ export class SuperTableComponent implements OnInit, OnChanges{
   public tableColumns: SuperTableColumn[] = [];
 
   public draggingTableColumn?: SuperTableColumn;
+
+  public draggingTableRow?: SuperTableRowColumn;
 
   public tableRowsToDisplay :SuperTableRow[] = []
 
@@ -113,10 +116,12 @@ export class SuperTableComponent implements OnInit, OnChanges{
 
     this.swapElements(this.tableColumns,indexDraggedElement,indexOfTargetElement);
 
+    ev.dataTransfer?.clearData();
+
     this.draggingTableColumn = undefined;
 
-    this.tableRowsToDisplay = this.getRows();
     this.rows = this.tableRowsToDisplay;
+    this.tableRowsToDisplay = this.getRows();
   }
 
   public tableColumnOnDragOver(event: DragEvent){
@@ -136,7 +141,20 @@ export class SuperTableComponent implements OnInit, OnChanges{
   };
 
 
+  public dropSuperTableRowColumn(event: CdkDragDrop<SuperTableRowColumn[]>) {
+    let currentIndex = this.tableRowsToDisplay[event.currentIndex].index;
+
+    this.tableRowsToDisplay[event.currentIndex].index = this.tableRowsToDisplay[event.previousIndex].index;
+    this.tableRowsToDisplay[event.previousIndex].index = currentIndex;
+
+    this.swapElements(this.tableRowsToDisplay, event.currentIndex, event.previousIndex);
+
+    this.rows = this.tableRowsToDisplay;
+    this.tableRowsToDisplay = this.getRows();
+  }
+
   private swapElements<T>(array: T[], index1: number, index2: number): void {
     [array[index1], array[index2]] = [array[index2], array[index1]];
   }
+
 }
