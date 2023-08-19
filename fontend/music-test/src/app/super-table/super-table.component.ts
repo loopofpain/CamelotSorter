@@ -34,6 +34,7 @@ export class SuperTableComponent implements OnInit, OnChanges{
     let columnsDictionary: any = { };
 
     this.rows.forEach(row => {
+      debugger;
       row.columns.forEach(column => {
         if(columnsDictionary[column.columnName] !== undefined){
           columnsDictionary[column.columnName].index++;
@@ -42,7 +43,7 @@ export class SuperTableComponent implements OnInit, OnChanges{
           columnsDictionary[column.columnName] = {
             index: 1,
             type: column.type,
-            propertyName: ''
+            propertyName: column.propertyName
           }
         }
       });
@@ -56,6 +57,8 @@ export class SuperTableComponent implements OnInit, OnChanges{
         superTableColumn.order= ++index;
         superTableColumn.type = columnsDictionary[columnName].type
         superTableColumn.propertyName = columnsDictionary[columnName].propertyName
+
+      debugger;
 
       result.push(superTableColumn);
     });
@@ -95,8 +98,8 @@ export class SuperTableComponent implements OnInit, OnChanges{
 
     row.columns.forEach(x => {
       if(x.columnName === this.lockColumnName && x.value === true) {
-        debugger;
         hasMatch = true;
+        return;
       }
     })
 
@@ -182,6 +185,25 @@ export class SuperTableComponent implements OnInit, OnChanges{
 
     this.rows = this.tableRowsToDisplay;
     this.tableRowsToDisplay = this.getRows();
+  }
+
+  public getResult(): any {
+    const result: any[] = [];
+
+    this.tableRowsToDisplay.forEach(element => {
+      let elem: any = {}
+      debugger;
+      element.columns.forEach(y => {
+        debugger;
+        elem[y.propertyName]=y.value
+      })
+
+      result.push(elem)
+    });
+
+    console.log(result);
+
+    return result;
   }
 
   private swapElements<T>(array: T[], index1: number, index2: number): void {
