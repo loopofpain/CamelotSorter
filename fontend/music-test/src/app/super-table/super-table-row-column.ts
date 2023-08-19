@@ -30,6 +30,11 @@ export class SuperTableRowColumn {
   public onChange($event: any) {
     if (this.type === 'boolean') {
       this.inputValue = !(this.inputValue as boolean)
+      this.parent.columns.forEach(x => {
+        if(x.columnName == this.columnName){
+          x.inputValue = this.inputValue;
+        }
+      });
     } else {
       throw Error('Undefined')
     }

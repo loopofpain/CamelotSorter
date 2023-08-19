@@ -10,8 +10,10 @@
   </thead>
 
   <tbody cdkDropList (cdkDropListDropped)="dropSuperTableRowColumn($event)">
-    <tr cdkDrag cdkDragLockAxis="y" [id]="row.cssId" *ngFor="let row of tableRowsToDisplay">
+    <tr cdkDrag cdkDragLockAxis="y" [id]="row.cssId" *ngFor="let row of tableRowsToDisplay;let indexOfelement=index;">
       <td cdkDragHandle [id]="columnsInRow.cssId" *ngFor="let columnsInRow of row.columns">
+        <!-- {{isRowLocked(row)}} -->
+
         <span *ngIf="columnsInRow.type === 'boolean'">
           <input type="checkbox" [checked]="columnsInRow.value"
             (change)="columnsInRow.onChange($event)" />

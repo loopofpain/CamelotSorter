@@ -21,6 +21,8 @@ export class SuperTableComponent implements OnInit, OnChanges{
 
   public tableRowsToDisplay :SuperTableRow[] = []
 
+  @Input() public lockColumnName: string = "Is Fixed"
+
   constructor() {
 
   }
@@ -85,6 +87,21 @@ export class SuperTableComponent implements OnInit, OnChanges{
     }
 
     return resultRows;
+  }
+
+  public isRowLocked(row: SuperTableRow): boolean {
+
+    let hasMatch=false;
+
+    row.columns.forEach(x => {
+      if(x.columnName === this.lockColumnName && x.value === true) {
+        debugger;
+        hasMatch = true;
+      }
+    })
+
+
+    return hasMatch;
   }
 
   public ngOnChanges(changes: SimpleChanges): void {
