@@ -14,24 +14,30 @@
       <td  [ngClass]="{'column-locked' : isRowLocked(row)}" cdkDragHandle [id]="columnsInRow.cssId"
         *ngFor="let columnsInRow of row.columns">
 
-        <span *ngIf="columnsInRow.columnName==='Save' && columnsInRow.type === 'boolean'">
+        <span *ngIf="columnsInRow.columnName==='Save' && columnsInRow.type === 'boolean' && !isRowLocked(row)">
           <input type="checkbox" [checked]="columnsInRow.value" (change)="columnsInRow.onChange($event)" />
-          <!-- <input *ngIf="columnsInRow.value" type="checkbox" [checked]="columnsInRow.value" (change)="columnsInRow.onChange($event)" /> -->
         </span>
 
-        <span *ngIf="columnsInRow.columnName!=='Save' &&columnsInRow.type === 'boolean'">
+        <span *ngIf="columnsInRow.columnName!=='Save' &&columnsInRow.type === 'boolean' && !canEdit(row)">
           <input type="checkbox" [checked]="columnsInRow.value" (change)="columnsInRow.onChange($event)" />
         </span>
 
         <span *ngIf="columnsInRow.type !== 'boolean' && !canEdit(row)">{{columnsInRow.value}}</span>
         <span *ngIf="columnsInRow.type !== 'boolean' && canEdit(row)">
-          <!-- {{columnsInRow.value}} -->
-
           <input [(ngModel)]="columnsInRow.inputValue">
         </span>
       </td>
     </tr>
   </tbody>
+  <tfoot>
+    <tr >
+      <td [attr.colspan]="getColSpan()">
+        <div class="toolbar">
+          <button (click)="getResult()">Log JSON</button>
+          <button (click)="addRow()">Add Row</button>
+        </div>
+      </td>
+    </tr>
+  </tfoot>
 </table>
 
-<button (click)="getResult()">Show new data</button>

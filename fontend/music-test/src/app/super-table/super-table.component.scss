@@ -7,6 +7,12 @@
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
 }
 
+.styled-table tfoot tr {
+  background-color: #009879;
+  color: #ffffff;
+  text-align: left;
+}
+
 .styled-table thead tr {
   background-color: #009879;
   color: #ffffff;
@@ -42,4 +48,14 @@
 .styled-table tbody tr.active-row {
   font-weight: bold;
   color: #009879;
+}
+
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.toolbar button {
+  padding: 5px 10px;
 }

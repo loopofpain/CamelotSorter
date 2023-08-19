@@ -9,7 +9,7 @@ import { CdkDragDrop, moveItemInArray } from "@angular/cdk/drag-drop";
   templateUrl: './super-table.component.html',
   styleUrls: ['./super-table.component.scss']
 })
-export class SuperTableComponent implements OnInit, OnChanges{
+export class SuperTableComponent implements OnInit, OnChanges {
 
   @Input() public rows: SuperTableRow[] = []
 
@@ -19,7 +19,7 @@ export class SuperTableComponent implements OnInit, OnChanges{
 
   public draggingTableRow?: SuperTableRowColumn;
 
-  public tableRowsToDisplay :SuperTableRow[] = []
+  public tableRowsToDisplay: SuperTableRow[] = []
 
   @Input() public lockColumnName: string = "Is Fixed"
 
@@ -27,17 +27,16 @@ export class SuperTableComponent implements OnInit, OnChanges{
 
   }
 
-  public getColumns(): SuperTableColumn[]
-  {
+  public getColumns(): SuperTableColumn[] {
     const result: SuperTableColumn[] = [];
 
-    let columnsDictionary: any = { };
+    let columnsDictionary: any = {};
 
     this.rows.forEach(row => {
       row.columns.forEach(column => {
-        if(columnsDictionary[column.columnName] !== undefined){
+        if (columnsDictionary[column.columnName] !== undefined) {
           columnsDictionary[column.columnName].index++;
-        }else {
+        } else {
 
           columnsDictionary[column.columnName] = {
             index: 1,
@@ -54,54 +53,59 @@ export class SuperTableComponent implements OnInit, OnChanges{
       propertyName: ''
     }
 
-
-    let index=0;
+    let index = 0;
 
     Object.keys(columnsDictionary).forEach(columnName => {
-      let superTableColumn : SuperTableColumn= new SuperTableColumn()
-        superTableColumn.columnName= columnName;
-        superTableColumn.order= ++index;
-        superTableColumn.type = columnsDictionary[columnName].type
-        superTableColumn.propertyName = columnsDictionary[columnName].propertyName
+      let superTableColumn: SuperTableColumn = new SuperTableColumn()
+      superTableColumn.columnName = columnName;
+      superTableColumn.order = ++index;
+      superTableColumn.type = columnsDictionary[columnName].type
+      superTableColumn.propertyName = columnsDictionary[columnName].propertyName
       result.push(superTableColumn);
     });
 
     return result;
   }
 
-  public canEdit(a:SuperTableRow): boolean {
+  public canEdit(row: SuperTableRow): boolean {
     let result = false;
 
-    a.columns.forEach(x => {
-      if(x.columnName==='Save' && x.value ===true){
+    row.columns.forEach(column => {
+      if (column.columnName === 'Save' && column.value === true) {
         result = true;
         return;
       }
     })
 
-    return result;
+    return result && !this.isRowLocked(row);
   }
 
   public getRows(): SuperTableRow[] {
-    const resultRows: SuperTableRow[]  = [];
+    const resultRows: SuperTableRow[] = [];
 
-    let index=0;
+    let index = 0;
 
     for (let row of this.rows) {
       const resultRow = new SuperTableRow();
       row.index = ++index;
       resultRow.index = row.index
 
-      for(let column of this.tableColumns) {
-        row.columns.forEach(sourceColumn => {
-          if(sourceColumn.columnName === column.columnName){
-            const newRowColumn: SuperTableRowColumn= new SuperTableRowColumn(resultRow,column.propertyName,sourceColumn.columnName,sourceColumn.inputValue, sourceColumn.type);
+      let hasSave = false;
 
+      for (let column of this.tableColumns) {
+        row.columns.forEach(sourceColumn => {
+          if (sourceColumn.columnName === column.columnName && sourceColumn.columnName !== 'Save') {
+            const newRowColumn: SuperTableRowColumn = new SuperTableRowColumn(resultRow, column.propertyName, sourceColumn.columnName, sourceColumn.inputValue, sourceColumn.type);
             resultRow.columns.push(newRowColumn);
+          }
+
+          if (sourceColumn.columnName === "Save") {
+            hasSave = true;
           }
         });
       }
-      const newRowColumn: SuperTableRowColumn= new SuperTableRowColumn(resultRow,'','Save',false, 'boolean');
+
+      const newRowColumn: SuperTableRowColumn = new SuperTableRowColumn(resultRow, '', 'Save', false, 'boolean');
       resultRow.columns.push(newRowColumn);
 
       resultRows.push(resultRow);
@@ -110,11 +114,48 @@ export class SuperTableComponent implements OnInit, OnChanges{
     return resultRows;
   }
 
+  public addRow(): void {
+    let index = this.tableRowsToDisplay[this.tableRowsToDisplay.length - 1].index + 1;
+
+    const resultRow = new SuperTableRow();
+    resultRow.index = index
+
+    for (let column of this.tableColumns) {
+
+      let defaultValue: any = '';
+
+      if (column.type === 'string') {
+
+      } else if (column.type === 'boolean') {
+        defaultValue = false;
+      } else if (column.type === 'number') {
+        defaultValue = 0;
+      }
+
+      if (column.columnName === "Save") {
+        continue
+      }
+
+      const newRowColumn: SuperTableRowColumn = new SuperTableRowColumn(resultRow, column.propertyName, column.columnName, defaultValue, column.type);
+      resultRow.columns.push(newRowColumn);
+
+    }
+
+
+    const newRowColumn: SuperTableRowColumn = new SuperTableRowColumn(resultRow, '', 'Save', false, 'boolean');
+    resultRow.columns.push(newRowColumn);
+
+
+    this.tableRowsToDisplay.push(resultRow);
+
+  }
+
+
   public isRowLocked(row: SuperTableRow): boolean {
-    let hasMatch=false;
+    let hasMatch = false;
 
     row.columns.forEach(column => {
-      if(column.columnName === this.lockColumnName && column.value === true) {
+      if (column.columnName === this.lockColumnName && column.value === true) {
         hasMatch = true;
         return;
       }
@@ -133,12 +174,12 @@ export class SuperTableComponent implements OnInit, OnChanges{
     this.tableRowsToDisplay = this.getRows();
   }
 
-  public tableColumnOnDrop(ev:DragEvent) {
+  public tableColumnOnDrop(ev: DragEvent) {
     ev.preventDefault();
 
     const indexDraggedElement = this.tableColumns.indexOf(this.draggingTableColumn!);
 
-    if(indexDraggedElement === -1){
+    if (indexDraggedElement === -1) {
       this.draggingTableColumn = undefined;
       return;
     }
@@ -147,9 +188,9 @@ export class SuperTableComponent implements OnInit, OnChanges{
 
     for (let index = 0; index < this.tableColumns.length; index++) {
       const element = this.tableColumns[index];
-      const currentTarget: HTMLElement | null= ev.currentTarget as HTMLElement;
+      const currentTarget: HTMLElement | null = ev.currentTarget as HTMLElement;
 
-      if(element.cssId === currentTarget.id){
+      if (element.cssId === currentTarget.id) {
         indexOfTargetElement = index;
         break;
       }
@@ -160,7 +201,7 @@ export class SuperTableComponent implements OnInit, OnChanges{
     this.tableColumns[indexDraggedElement].order = this.tableColumns[indexOfTargetElement].order;
     this.tableColumns[indexOfTargetElement].order = orderOfDraggedElementInArray;
 
-    this.swapElements(this.tableColumns,indexDraggedElement,indexOfTargetElement);
+    this.swapElements(this.tableColumns, indexDraggedElement, indexOfTargetElement);
 
     ev.dataTransfer?.clearData();
 
@@ -170,19 +211,19 @@ export class SuperTableComponent implements OnInit, OnChanges{
     this.tableRowsToDisplay = this.getRows();
   }
 
-  public tableColumnOnDragOver(event: DragEvent){
-    if(this.draggingTableColumn){
+  public tableColumnOnDragOver(event: DragEvent) {
+    if (this.draggingTableColumn) {
       event.preventDefault();
     }
   };
 
-  public tableColumnOnDragStart(event: DragEvent, item: SuperTableColumn){
+  public tableColumnOnDragStart(event: DragEvent, item: SuperTableColumn) {
     event!.dataTransfer!.setData('text', item.columnName);
     event!.dataTransfer!.effectAllowed = 'move';
     this.draggingTableColumn = item;
   };
 
-  public tableColumnOnDragEnd(event: DragEvent, item: SuperTableColumn){
+  public tableColumnOnDragEnd(event: DragEvent, item: SuperTableColumn) {
     this.draggingTableColumn = undefined;
   };
 
@@ -190,7 +231,7 @@ export class SuperTableComponent implements OnInit, OnChanges{
   public dropSuperTableRowColumn(event: CdkDragDrop<SuperTableRowColumn[]>) {
     let currentIndex = this.tableRowsToDisplay[event.currentIndex].index;
 
-    if(this.isRowLocked(this.tableRowsToDisplay[event.currentIndex]) || this.isRowLocked(this.tableRowsToDisplay[event.previousIndex]) ){
+    if (this.isRowLocked(this.tableRowsToDisplay[event.currentIndex]) || this.isRowLocked(this.tableRowsToDisplay[event.previousIndex])) {
       return;
     }
 
@@ -210,8 +251,8 @@ export class SuperTableComponent implements OnInit, OnChanges{
       let newListElement: any = {}
 
       row.columns.forEach(column => {
-        if(column.propertyName !== ''){
-          newListElement[column.propertyName]=column.value
+        if (column.propertyName !== '') {
+          newListElement[column.propertyName] = column.value
         }
       })
 
@@ -225,6 +266,10 @@ export class SuperTableComponent implements OnInit, OnChanges{
 
   private swapElements<T>(array: T[], index1: number, index2: number): void {
     [array[index1], array[index2]] = [array[index2], array[index1]];
+  }
+
+  public getColSpan(): number {
+    return this.tableColumns?.length ?? 0
   }
 
 }
