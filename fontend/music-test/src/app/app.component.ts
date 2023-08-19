@@ -19,7 +19,6 @@ export class AppComponent {
     const row1 = new SuperTableRow();
     row1.index = 1;
 
-    debugger;
     row1.columns = [
       new SuperTableRowColumn(row1, 'title', 'Title', 'Darude - Sandstorm', typeof ("")),
       new SuperTableRowColumn(row1, 'alt_key', 'Alt Key', 'A1', typeof ("")),
