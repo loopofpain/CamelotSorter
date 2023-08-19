@@ -171,6 +171,10 @@ export class SuperTableComponent implements OnInit, OnChanges{
   public dropSuperTableRowColumn(event: CdkDragDrop<SuperTableRowColumn[]>) {
     let currentIndex = this.tableRowsToDisplay[event.currentIndex].index;
 
+    if(this.isRowLocked(this.tableRowsToDisplay[event.currentIndex]) || this.isRowLocked(this.tableRowsToDisplay[event.previousIndex]) ){
+      return;
+    }
+
     this.tableRowsToDisplay[event.currentIndex].index = this.tableRowsToDisplay[event.previousIndex].index;
     this.tableRowsToDisplay[event.previousIndex].index = currentIndex;
 
