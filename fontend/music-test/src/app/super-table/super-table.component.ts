@@ -33,7 +33,14 @@ export class SuperTableComponent implements OnInit, OnChanges{
 
     this.rows.forEach(row => {
       row.columns.forEach(column => {
-        columnsDictionary[column.columnName]=+1;
+        if(columnsDictionary[column.columnName] !== undefined){
+          columnsDictionary[column.columnName].index++;
+        }else {
+          columnsDictionary[column.columnName] = {
+            index: 1,
+            type: column.type
+          }
+        }
       });
     });
 
@@ -43,7 +50,7 @@ export class SuperTableComponent implements OnInit, OnChanges{
       let superTableColumn : SuperTableColumn= new SuperTableColumn()
         superTableColumn.columnName= columnName;
         superTableColumn.order= ++index;
-
+        superTableColumn.type = columnsDictionary[columnName].type
 
       result.push(superTableColumn);
     });
@@ -64,7 +71,7 @@ export class SuperTableComponent implements OnInit, OnChanges{
       for(let column of this.tableColumns) {
         row.columns.forEach(sourceColumn => {
           if(sourceColumn.columnName === column.columnName){
-            const newRowColumn: SuperTableRowColumn= new SuperTableRowColumn(resultRow,sourceColumn.columnName,sourceColumn.value);
+            const newRowColumn: SuperTableRowColumn= new SuperTableRowColumn(resultRow,sourceColumn.columnName,sourceColumn.value, typeof(sourceColumn.value));
 
             resultRow.columns.push(newRowColumn);
           }

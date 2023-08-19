@@ -19,27 +19,27 @@ export class AppComponent {
     const row1 = new SuperTableRow();
     row1.index=1;
     row1.columns=[
-      new SuperTableRowColumn(row1,'Title','Darude - Sandstorm'),
-      new SuperTableRowColumn(row1,'Alt Key','A1'),
-      new SuperTableRowColumn(row1,'Is Fixed','True')
+      new SuperTableRowColumn(row1,'Title','Darude - Sandstorm',typeof("")),
+      new SuperTableRowColumn(row1,'Alt Key','A1',typeof("")),
+      new SuperTableRowColumn(row1,'Is Fixed','True',typeof(""))
 
     ];
 
     const row2 = new SuperTableRow();
     row2.index=2;
     row2.columns=[
-      new SuperTableRowColumn(row2, 'Title','Sido - Arschficksong'),
-      new SuperTableRowColumn(row2, 'Alt Key','A2'),
-      new SuperTableRowColumn(row2, 'Is Fixed','True')
+      new SuperTableRowColumn(row2, 'Title','Sido - Arschficksong',typeof("")),
+      new SuperTableRowColumn(row2, 'Alt Key','A2',typeof("")),
+      new SuperTableRowColumn(row2, 'Is Fixed','True',typeof(""))
 
     ];
 
     const row3 = new SuperTableRow();
     row3.index=3;
     row3.columns=[
-      new SuperTableRowColumn(row3, 'Title','SSIO - NULLKOMMAEINS'),
-      new SuperTableRowColumn(row3, 'Alt Key','B9'),
-      new SuperTableRowColumn(row3, 'Is Fixed','False')
+      new SuperTableRowColumn(row3, 'Title','SSIO - NULLKOMMAEINS',typeof("")),
+      new SuperTableRowColumn(row3, 'Alt Key','B9',typeof("")),
+      new SuperTableRowColumn(row3, 'Is Fixed','False',typeof(""))
 
     ];
 
