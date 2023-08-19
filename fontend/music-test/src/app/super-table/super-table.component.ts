@@ -34,7 +34,6 @@ export class SuperTableComponent implements OnInit, OnChanges{
     let columnsDictionary: any = { };
 
     this.rows.forEach(row => {
-      debugger;
       row.columns.forEach(column => {
         if(columnsDictionary[column.columnName] !== undefined){
           columnsDictionary[column.columnName].index++;
@@ -49,6 +48,13 @@ export class SuperTableComponent implements OnInit, OnChanges{
       });
     });
 
+    columnsDictionary['Save'] = {
+      index: 1,
+      type: 'boolean',
+      propertyName: ''
+    }
+
+
     let index=0;
 
     Object.keys(columnsDictionary).forEach(columnName => {
@@ -57,11 +63,21 @@ export class SuperTableComponent implements OnInit, OnChanges{
         superTableColumn.order= ++index;
         superTableColumn.type = columnsDictionary[columnName].type
         superTableColumn.propertyName = columnsDictionary[columnName].propertyName
-
-      debugger;
-
       result.push(superTableColumn);
     });
+
+    return result;
+  }
+
+  public canEdit(a:SuperTableRow): boolean {
+    let result = false;
+
+    a.columns.forEach(x => {
+      if(x.columnName==='Save' && x.value ===true){
+        result = true;
+        return;
+      }
+    })
 
     return result;
   }
@@ -85,6 +101,8 @@ export class SuperTableComponent implements OnInit, OnChanges{
           }
         });
       }
+      const newRowColumn: SuperTableRowColumn= new SuperTableRowColumn(resultRow,'','Save',false, 'boolean');
+      resultRow.columns.push(newRowColumn);
 
       resultRows.push(resultRow);
     }
@@ -93,16 +111,14 @@ export class SuperTableComponent implements OnInit, OnChanges{
   }
 
   public isRowLocked(row: SuperTableRow): boolean {
-
     let hasMatch=false;
 
-    row.columns.forEach(x => {
-      if(x.columnName === this.lockColumnName && x.value === true) {
+    row.columns.forEach(column => {
+      if(column.columnName === this.lockColumnName && column.value === true) {
         hasMatch = true;
         return;
       }
     })
-
 
     return hasMatch;
   }
@@ -190,15 +206,16 @@ export class SuperTableComponent implements OnInit, OnChanges{
   public getResult(): any {
     const result: any[] = [];
 
-    this.tableRowsToDisplay.forEach(element => {
-      let elem: any = {}
-      debugger;
-      element.columns.forEach(y => {
-        debugger;
-        elem[y.propertyName]=y.value
+    this.tableRowsToDisplay.forEach(row => {
+      let newListElement: any = {}
+
+      row.columns.forEach(column => {
+        if(column.propertyName !== ''){
+          newListElement[column.propertyName]=column.value
+        }
       })
 
-      result.push(elem)
+      result.push(newListElement)
     });
 
     console.log(result);
