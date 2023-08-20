@@ -4,6 +4,7 @@ import { SuperTableColumn } from './super-table-column';
 import { SuperTableRowColumn } from './super-table-row-column';
 import { CdkDragDrop } from "@angular/cdk/drag-drop";
 import { ISuperTableColumn } from './super-table-column.interface';
+import { SuperTableActionsColumn } from './super-table-actions-column';
 
 @Component({
   selector: 'app-super-table',
@@ -65,6 +66,8 @@ export class SuperTableComponent implements OnInit, OnChanges {
       result.push(superTableColumn);
     });
 
+    result.push(new SuperTableActionsColumn())
+
     return result;
   }
 
@@ -91,8 +94,6 @@ export class SuperTableComponent implements OnInit, OnChanges {
       row.index = ++index;
       resultRow.index = row.index
 
-      let hasSave = false;
-
       for (let column of this.tableColumns) {
         row.columns.forEach(sourceColumn => {
           if (sourceColumn.columnName === column.columnName && sourceColumn.columnName !== 'Save') {
@@ -100,9 +101,6 @@ export class SuperTableComponent implements OnInit, OnChanges {
             resultRow.columns.push(newRowColumn);
           }
 
-          if (sourceColumn.columnName === "Save") {
-            hasSave = true;
-          }
         });
       }
 
