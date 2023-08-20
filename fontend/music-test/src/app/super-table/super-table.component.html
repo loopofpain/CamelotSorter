@@ -14,17 +14,15 @@
       <td  [ngClass]="{'column-locked' : isRowLocked(row)}" cdkDragHandle [id]="columnsInRow.cssId"
         *ngFor="let columnsInRow of row.columns">
 
-        <span *ngIf="columnsInRow.columnName==='Save' && columnsInRow.type === 'boolean' && !isRowLocked(row)">
-          <input type="checkbox" [checked]="columnsInRow.value" (change)="columnsInRow.onChange($event)" />
-        </span>
-
-        <span *ngIf="columnsInRow.columnName!=='Save' &&columnsInRow.type === 'boolean' && !canEdit(row)">
-          <input type="checkbox" [checked]="columnsInRow.value" (change)="columnsInRow.onChange($event)" />
-        </span>
-
-        <span *ngIf="columnsInRow.type !== 'boolean' && !canEdit(row)">{{columnsInRow.value}}</span>
-        <span *ngIf="columnsInRow.type !== 'boolean' && canEdit(row)">
+        <span *ngIf="columnsInRow.type !== 'boolean' && columnsInRow.type !== 'actions' && !canEdit(row)">{{columnsInRow.value}}</span>
+        <span *ngIf="columnsInRow.type !== 'boolean' && columnsInRow.type !== 'actions' && canEdit(row)">
           <input [(ngModel)]="columnsInRow.inputValue">
+        </span>
+
+        <span *ngIf="columnsInRow.type === 'actions'">
+          <input *ngIf="!row.isEdit" type="checkbox" [(ngModel)]="row.isFixed">
+
+          <input *ngIf="!row.isFixed" type="checkbox" [(ngModel)]="row.isEdit">
         </span>
       </td>
     </tr>

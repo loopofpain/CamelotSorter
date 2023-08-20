@@ -6,6 +6,7 @@ import { CdkDragDrop } from "@angular/cdk/drag-drop";
 import { ISuperTableColumn } from './super-table-column.interface';
 import { SuperTableActionsColumn } from './super-table-actions-column';
 import { ISuperTableRowColumn } from './super-table-row-column.interface';
+import { SuperTableRowActionsColumn } from './super-table-row-actions-column';
 
 @Component({
   selector: 'app-super-table',
@@ -23,8 +24,6 @@ export class SuperTableComponent implements OnInit, OnChanges {
   public draggingTableRow?: ISuperTableRowColumn;
 
   public tableRowsToDisplay: SuperTableRow[] = []
-
-  @Input() public lockColumnName: string = "Is Fixed"
 
   constructor() {
 
@@ -50,12 +49,6 @@ export class SuperTableComponent implements OnInit, OnChanges {
       });
     });
 
-    columnsDictionary['Save'] = {
-      index: 1,
-      type: 'boolean',
-      propertyName: ''
-    }
-
     let index = 0;
 
     Object.keys(columnsDictionary).forEach(columnName => {
@@ -73,16 +66,7 @@ export class SuperTableComponent implements OnInit, OnChanges {
   }
 
   public canEdit(row: SuperTableRow): boolean {
-    let result = false;
-
-    row.columns.forEach(column => {
-      if (column.columnName === 'Save' && column.value === true) {
-        result = true;
-        return;
-      }
-    })
-
-    return result && !this.isRowLocked(row);
+    return row.isEdit && !this.isRowLocked(row);
   }
 
   public getRows(): SuperTableRow[] {
@@ -97,16 +81,16 @@ export class SuperTableComponent implements OnInit, OnChanges {
 
       for (let column of this.tableColumns) {
         row.columns.forEach(sourceColumn => {
-          if (sourceColumn.columnName === column.columnName && sourceColumn.columnName !== 'Save') {
+          if (sourceColumn.columnName === column.columnName && column.type != 'Actions') {
             const newRowColumn: SuperTableRowColumn = new SuperTableRowColumn(resultRow, column.propertyName, sourceColumn.columnName, sourceColumn.inputValue, sourceColumn.type);
             resultRow.columns.push(newRowColumn);
           }
-
         });
       }
 
-      const newRowColumn: SuperTableRowColumn = new SuperTableRowColumn(resultRow, '', 'Save', false, 'boolean');
-      resultRow.columns.push(newRowColumn);
+
+      const actionsColumn: ISuperTableRowColumn = new SuperTableRowActionsColumn(resultRow);
+      resultRow.columns.push(actionsColumn);
 
       resultRows.push(resultRow);
     }
@@ -123,6 +107,7 @@ export class SuperTableComponent implements OnInit, OnChanges {
     for (let column of this.tableColumns) {
 
       let defaultValue: any = '';
+      let newRowColumn: ISuperTableRowColumn
 
       if (column.type === 'string') {
 
@@ -130,38 +115,23 @@ export class SuperTableComponent implements OnInit, OnChanges {
         defaultValue = false;
       } else if (column.type === 'number') {
         defaultValue = 0;
+      } else if(column.type === 'Actions') {
+        newRowColumn = new SuperTableRowActionsColumn(resultRow);
+        resultRow.columns.push(newRowColumn);
+
+        continue;
       }
 
-      if (column.columnName === "Save") {
-        continue
-      }
-
-      const newRowColumn: ISuperTableRowColumn = new SuperTableRowColumn(resultRow, column.propertyName, column.columnName, defaultValue, column.type);
+      newRowColumn = new SuperTableRowColumn(resultRow, column.propertyName, column.columnName, defaultValue, column.type);
       resultRow.columns.push(newRowColumn);
-
     }
 
-
-    const newRowColumn: ISuperTableRowColumn = new SuperTableRowColumn(resultRow, '', 'Save', false, 'boolean');
-    resultRow.columns.push(newRowColumn);
-
-
     this.tableRowsToDisplay.push(resultRow);
-
   }
 
 
   public isRowLocked(row: SuperTableRow): boolean {
-    let hasMatch = false;
-
-    row.columns.forEach(column => {
-      if (column.columnName === this.lockColumnName && column.value === true) {
-        hasMatch = true;
-        return;
-      }
-    })
-
-    return hasMatch;
+    return row.isFixed;
   }
 
   public ngOnChanges(changes: SimpleChanges): void {
@@ -249,7 +219,6 @@ export class SuperTableComponent implements OnInit, OnChanges {
 
     this.tableRowsToDisplay.forEach(row => {
       let newListElement: any = {}
-
       row.columns.forEach(column => {
         if (column.propertyName !== '') {
           newListElement[column.propertyName!] = column.value

@@ -22,7 +22,7 @@ export class AppComponent {
     row1.columns = [
       new SuperTableRowColumn(row1, 'title', 'Title', 'Darude - Sandstorm', typeof ("")),
       new SuperTableRowColumn(row1, 'alt_key', 'Alt Key', 'A1', typeof ("")),
-      new SuperTableRowColumn(row1, 'is_fixed', 'Is Fixed', true, typeof (true))
+      new SuperTableRowColumn(row1, 'author', 'Author', "Darude", typeof (""))
 
     ];
 
@@ -31,7 +31,7 @@ export class AppComponent {
     row2.columns = [
       new SuperTableRowColumn(row2, 'title', 'Title', 'Sido - Arschficksong', typeof ("")),
       new SuperTableRowColumn(row2, 'alt_key', 'Alt Key', 'A2', typeof ("")),
-      new SuperTableRowColumn(row2, 'is_fixed', 'Is Fixed', true, typeof (true))
+      new SuperTableRowColumn(row2, 'author', 'Author', "Sido", typeof (""))
 
     ];
 
@@ -40,7 +40,7 @@ export class AppComponent {
     row3.columns = [
       new SuperTableRowColumn(row3, 'title', 'Title', 'SSIO - NULLKOMMAEINS', typeof ("")),
       new SuperTableRowColumn(row3, 'alt_key', 'Alt Key', 'B9', typeof ("")),
-      new SuperTableRowColumn(row3, 'is_fixed', 'Is Fixed', false, typeof (true))
+      new SuperTableRowColumn(row3, 'author', 'Author', "SSIO", typeof (""))
 
     ];
 
