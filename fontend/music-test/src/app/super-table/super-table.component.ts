@@ -2,7 +2,8 @@ import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/cor
 import { SuperTableRow } from './super-table-row';
 import { SuperTableColumn } from './super-table-column';
 import { SuperTableRowColumn } from './super-table-row-column';
-import { CdkDragDrop, moveItemInArray } from "@angular/cdk/drag-drop";
+import { CdkDragDrop } from "@angular/cdk/drag-drop";
+import { ISuperTableColumn } from './super-table-column.interface';
 
 @Component({
   selector: 'app-super-table',
@@ -13,9 +14,9 @@ export class SuperTableComponent implements OnInit, OnChanges {
 
   @Input() public rows: SuperTableRow[] = []
 
-  public tableColumns: SuperTableColumn[] = [];
+  public tableColumns: ISuperTableColumn[] = [];
 
-  public draggingTableColumn?: SuperTableColumn;
+  public draggingTableColumn?: ISuperTableColumn;
 
   public draggingTableRow?: SuperTableRowColumn;
 
@@ -27,8 +28,8 @@ export class SuperTableComponent implements OnInit, OnChanges {
 
   }
 
-  public getColumns(): SuperTableColumn[] {
-    const result: SuperTableColumn[] = [];
+  public getColumns(): ISuperTableColumn[] {
+    const result: ISuperTableColumn[] = [];
 
     let columnsDictionary: any = {};
 

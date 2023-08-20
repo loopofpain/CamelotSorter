@@ -1,4 +1,6 @@
-export class SuperTableColumn {
+import { ISuperTableColumn } from "./super-table-column.interface";
+
+export class SuperTableColumn implements ISuperTableColumn {
     public columnName!:string;
     public propertyName!: string;
     public order: number = 0;
