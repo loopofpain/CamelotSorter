@@ -99,7 +99,10 @@ export class SuperTableComponent implements OnInit, OnChanges {
   }
 
   public addRow(): void {
-    let index = this.tableRowsToDisplay[this.tableRowsToDisplay.length - 1].index + 1;
+    let index = 1;
+    if(this.tableRowsToDisplay.length>0) {
+      index = this.tableRowsToDisplay[this.tableRowsToDisplay.length - 1].index + 1;
+    }
 
     const resultRow = new SuperTableRow();
     resultRow.index = index
@@ -129,6 +132,22 @@ export class SuperTableComponent implements OnInit, OnChanges {
     this.tableRowsToDisplay.push(resultRow);
   }
 
+  public deleteRow(row: SuperTableRow) {
+    let found = -1;
+
+    for (let index = 0; index < this.tableRowsToDisplay.length; index++) {
+      if(this.tableRowsToDisplay[index].index === row.index){
+        found = index;
+        break;
+      }
+    }
+
+    if(found < 0){
+      return;
+    }
+
+    this.tableRowsToDisplay.splice(found,1);
+  }
 
   public isRowLocked(row: SuperTableRow): boolean {
     return row.isFixed;

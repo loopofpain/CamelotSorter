@@ -21,8 +21,8 @@
 
         <span *ngIf="columnsInRow.type === 'actions'">
           <input *ngIf="!row.isEdit" type="checkbox" [(ngModel)]="row.isFixed">
-
           <input *ngIf="!row.isFixed" type="checkbox" [(ngModel)]="row.isEdit">
+          <input type="button" value="Delete" (click)="deleteRow(row)"/>
         </span>
       </td>
     </tr>
