@@ -5,6 +5,7 @@ import { SuperTableRowColumn } from './super-table-row-column';
 import { CdkDragDrop } from "@angular/cdk/drag-drop";
 import { ISuperTableColumn } from './super-table-column.interface';
 import { SuperTableActionsColumn } from './super-table-actions-column';
+import { ISuperTableRowColumn } from './super-table-row-column.interface';
 
 @Component({
   selector: 'app-super-table',
@@ -19,7 +20,7 @@ export class SuperTableComponent implements OnInit, OnChanges {
 
   public draggingTableColumn?: ISuperTableColumn;
 
-  public draggingTableRow?: SuperTableRowColumn;
+  public draggingTableRow?: ISuperTableRowColumn;
 
   public tableRowsToDisplay: SuperTableRow[] = []
 
@@ -135,13 +136,13 @@ export class SuperTableComponent implements OnInit, OnChanges {
         continue
       }
 
-      const newRowColumn: SuperTableRowColumn = new SuperTableRowColumn(resultRow, column.propertyName, column.columnName, defaultValue, column.type);
+      const newRowColumn: ISuperTableRowColumn = new SuperTableRowColumn(resultRow, column.propertyName, column.columnName, defaultValue, column.type);
       resultRow.columns.push(newRowColumn);
 
     }
 
 
-    const newRowColumn: SuperTableRowColumn = new SuperTableRowColumn(resultRow, '', 'Save', false, 'boolean');
+    const newRowColumn: ISuperTableRowColumn = new SuperTableRowColumn(resultRow, '', 'Save', false, 'boolean');
     resultRow.columns.push(newRowColumn);
 
 
@@ -251,7 +252,7 @@ export class SuperTableComponent implements OnInit, OnChanges {
 
       row.columns.forEach(column => {
         if (column.propertyName !== '') {
-          newListElement[column.propertyName] = column.value
+          newListElement[column.propertyName!] = column.value
         }
       })
 

@@ -1,11 +1,12 @@
 import { SuperTableRow } from "./super-table-row";
+import { ISuperTableRowColumn } from "./super-table-row-column.interface";
 
-export class SuperTableRowColumn {
+export class SuperTableRowColumn implements ISuperTableRowColumn{
   public columnName!: string;
-  public inputValue?: any;
+  public inputValue: any;
   public parent: SuperTableRow;
   private typeFromValue?: string;
-  public propertyName: string;
+  public propertyName: string | undefined;
 
   constructor(parent: SuperTableRow, propertyName: string, columnName: string, inputValue?: any, typeFromValue?: string) {
     this.propertyName = propertyName;
@@ -15,11 +16,11 @@ export class SuperTableRowColumn {
     this.typeFromValue = typeFromValue;
   }
 
-  public get value(): any {
+  public get value(): any | undefined {
     return this.inputValue;
   }
 
-  public get type(): string {
+  public get type(): string | undefined {
     if (this.typeFromValue) {
       return this.typeFromValue;
     }
@@ -27,7 +28,7 @@ export class SuperTableRowColumn {
     return "string";
   }
 
-  public onChange($event: any) {
+  public onChange($event: any): void {
     if (this.type === 'boolean') {
       this.inputValue = !(this.inputValue as boolean)
       this.parent.columns.forEach(x => {

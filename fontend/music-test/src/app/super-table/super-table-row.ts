@@ -1,7 +1,8 @@
 import { SuperTableRowColumn } from "./super-table-row-column";
+import { ISuperTableRowColumn } from "./super-table-row-column.interface";
 
 export class SuperTableRow {
-    public columns: SuperTableRowColumn[] = []
+    public columns: ISuperTableRowColumn[] = []
     public index: number=0;
 
 
